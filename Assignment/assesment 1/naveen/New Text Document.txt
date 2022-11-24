@@ -1,0 +1,50 @@
+#include<Servo.h>
+int red_led=12;//indicates gas
+int blue_led=11;//indicates normal
+int buzz=8;//indicates gas
+int smoke = A5;
+int temp=A0;//indicates sensor connected  A5
+int sensorThres=40;
+Servo s;
+void setup()
+{
+pinMode(red_led,OUTPUT);//red output
+pinMode(buzz,OUTPUT);// buzz output
+pinMode(blue_led,OUTPUT);//blue output
+pinMode(smoke,INPUT);
+pinMode(temp,INPUT);
+s.attach(3);
+Serial.begin(9600);
+}
+void loop()
+{
+int a=analogRead(smoke);
+  int b=map(a,0,1023,0,255);
+  Serial.println(b);
+ double c=analogRead(temp);
+  double d=(((c/1024)*5)-0.5)*100;
+  Serial.println(d);//reads sensor value
+if (b > sensorThres or d>100)
+{
+digitalWrite(red_led, HIGH);
+digitalWrite(blue_led, LOW);
+digitalWrite( buzz, HIGH);
+  for(int i=0;i<=90;i++)
+  {
+    s.write(i);
+    delay(1);
+  }//turn on buzzer
+}
+else
+{
+digitalWrite(red_led, LOW);
+digitalWrite(blue_led, HIGH);
+digitalWrite( buzz, LOW);
+   for(int i=90;i>=0;i--)
+  {
+    s.write(i);
+    delay(1);
+  }///turns buzzer off
+}
+delay(100);
+}
